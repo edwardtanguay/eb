@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Einbürgerungstest Berlin | Interaktiver Übungstrainer</title>
+  <!-- SEO Tags -->
+  <meta name="description" content="Übe die offiziellen Fragen für den Einbürgerungstest in Berlin. Markiere gelernte Fragen, sieh deinen Fortschritt und bestehe die Prüfung.">
+  <meta name="keywords" content="Einbürgerungstest, Berlin, Staatsbürgerschaft, Test, Übung, Fragen, Antworten">
+  
+  <!-- Font and Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Theme Initialization (Prevents white flash in dark mode) -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('eb_theme');
+        var theme = savedTheme || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Top German Flag Accent Ribbon -->
+  <div class="flag-ribbon">
+    <div class="ribbon-black"></div>
+    <div class="ribbon-red"></div>
+    <div class="ribbon-gold"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <i class="fa-solid fa-building-columns government-crest"></i>
+        <div>
+          <h1>Einbürgerungstest Berlin</h1>
+          <p class="subtitle">Die schwierigsten 50+ Fragen von 300<span class="subtitle-comma">, </span><br class="subtitle-br">laut <a href="https://tanguay.info" target="_blank" style="text-decoration: underline;">Edward</a></p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn-icon" aria-label="Farbschema wechseln">
+          <i class="fa-solid fa-sun" style="color: var(--accent-gold);"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    
+    <!-- Progress Dashboard -->
+    <section class="dashboard-section" id="dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Gesamtfragen</span>
+          <span class="stat-value" id="stat-total">54</span>
+        </div>
+        <div class="stat-card stat-learned">
+          <span class="stat-label">Gelernt</span>
+          <span class="stat-value" id="stat-learned">0</span>
+        </div>
+        <div class="stat-card stat-pending">
+          <span class="stat-label">Bereit</span>
+          <span class="stat-value" id="stat-bereit">54</span>
+        </div>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-label">
+          <span>Gesamtfortschritt</span>
+          <span id="progress-percentage">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter & Search Controls -->
+    <section class="controls-section" id="controls">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="search-input" placeholder="Fragen oder Antworten durchsuchen...">
+        <button id="clear-search" class="clear-btn" aria-label="Suche löschen" style="display: none;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="bereit">
+          <i class="fa-solid fa-layer-group"></i> Bereit <span class="badge" id="badge-bereit">0</span>
+        </button>
+        <button class="filter-tab tab-warning" data-filter="later">
+          <i class="fa-solid fa-clock"></i> Später <span class="badge" id="badge-later">0</span>
+        </button>
+        <button class="filter-tab tab-success" data-filter="learned">
+          <i class="fa-solid fa-circle-check"></i> Gelernt <span class="badge" id="badge-learned">0</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Questions Grid -->
+    <section class="questions-section">
+      <div class="no-results" id="no-results" style="display: none;">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>Keine Fragen gefunden, die den Kriterien entsprechen.</p>
+      </div>
+      <div class="questions-grid" id="questions-grid">
+        <!-- Questions will be dynamically loaded here by JS -->
+      </div>
+    </section>
+
+    <!-- Reset Section -->
+    <section class="reset-section">
+      <button id="reset-all">
+        Übungsdaten zurücksetzen
+      </button>
+      <p class="reset-hint">Dadurch wird dein gesamter Lernfortschritt unwiderruflich gelöscht.</p>
+    </section>
+  </main>
+
+
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="reset-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <i class="fa-solid fa-circle-exclamation modal-icon"></i>
+        <h3>Fortschritt zurücksetzen?</h3>
+      </div>
+      <div class="modal-body">
+        <p>Möchtest du wirklich all deine gelernten Fragen zurücksetzen und von vorne beginnen? Dies kann nicht rückgängig gemacht werden.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Abbrechen</button>
+        <button class="btn btn-danger" id="modal-confirm">Ja, zurücksetzen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Data and Application JS -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
